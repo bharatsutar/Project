@@ -1,0 +1,12 @@
+package com.model;
+
+public class Student {
+	
+	private Integer id;
+	private String name;
+	private Double mobileNo;
+	private String address;
+	private Integer batch;
+	private String subject1;
+	private String subject2;
+}

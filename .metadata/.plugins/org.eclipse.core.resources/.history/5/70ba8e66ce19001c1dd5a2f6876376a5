@@ -1,0 +1,91 @@
+package com.controller;
+
+import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Scanner;
+
+import javax.sql.RowSet;
+
+import com.dao.DBClass;
+import com.model.Batch;
+import com.model.Student;
+
+
+public class Client {
+	DBClass db=new DBClass();
+	Scanner sc=new Scanner(System.in);
+
+
+	public void getBatchs() {
+		//Scanner scanner=new Scanner(System.in);
+		//System.out.println("Before");
+		RowSet rs=db.getAll("Select * from Batch");
+		System.out.println("Avalable Batches");
+		System.out.println("Batch No.  |   Batch Time");
+		System.out.println("----------------------------");
+		try {
+			while (rs.next()) {
+				
+				System.out.println("  "+ rs.getString(1)+"        |     "+ rs.getString(2));
+				//System.out.println("Batch Time:- "+ rs.getString(2));
+				System.out.println("-------------------------------------");
+				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.print("Choose Batch :");
+		int ch=sc.nextInt();
+		enterStud(ch);
+		
+	}
+	public void enterStud(int batchno) {
+		//Scanner sc=new Scanner(System.in);
+			System.out.println("Enter ID :");
+			int id=sc.nextInt();
+		
+		
+		System.out.println("Enter Student Name :");
+		String name=sc.next();
+		System.out.println("Enter Mobile No. :");
+		double phone=sc.nextDouble();
+		System.out.println("Enter Address :");
+		String address=sc.next();
+		db.updateDB("Insert into Student (S_Id,S_Name, S_MobileNo,S_Address,Batch_No) values(?,?,?,?,?)", id,name,phone,address,batchno);
+		
+	}
+	
+	public void enterTrainer() {
+		//Scanner sc=new Scanner(System.in);
+			System.out.println("Enter ID :");
+			int id=sc.nextInt();
+		
+		
+		System.out.println("Enter Trainer Name :");
+		String name=sc.next();
+		System.out.println("Enter Mobile No. :");
+		double phone=sc.nextDouble();
+		System.out.println("Enter Address :");
+		String address=sc.next();
+		System.out.println("Enter Batch No. :");
+		int batchno=sc.nextInt();
+		RowSet rs=db.getAll("Select * from Batch");
+		try {
+			while (rs.next()) {
+				
+				if((int)rs.getString(1)==batchno)
+				//System.out.println("Batch Time:- "+ rs.getString(2));
+				System.out.println("-------------------------------------");
+				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		db.updateDB("Insert into Trainer (T_Id,T_Name, T_MobileNo,T_Address,Batch_No) values(?,?,?,?,?)", id,name,phone,address,batchno);
+		
+	}
+}

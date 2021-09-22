@@ -1,0 +1,47 @@
+
+package com.project;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class ConnectionDB {
+	
+	public static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
+	
+	public static final String JDBC_URL = "jdbc:mysql://localhost:3307/employeedb";
+	
+	static Connection conn = null;
+	
+	public static Connection getConnection()
+	{
+		try
+		{
+			Class.forName(JDBC_DRIVER);
+			System.out.println("Driver Loaded");
+			System.out.println("connecting database");
+			conn = DriverManager.getConnection(JDBC_URL ,"root","root");
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return conn;
+	}
+	
+	public static void main(String args[])
+	{
+		Connection con = ConnectionDB.getConnection();
+		if(con!=null)
+		{
+			System.out.println("Connection Establish");
+		}
+		else
+		{
+			System.out.println("Connection not Establish");
+		}
+		
+	}
+	
+
+}

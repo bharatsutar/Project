@@ -1,0 +1,52 @@
+package com.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class DBClass {
+	
+	Connection cn;
+	public void connect() {
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			cn=DriverManager.getConnection("jdbc:mysql://localhost:3306/trainingacademy","root","root");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	public void close() {
+		try {
+			cn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	//Get Data
+    public ResultSet getData(String sql,Object ... args){
+        ResultSet rs=null;
+        try{
+            connect();
+            PreparedStatement ps=cn.prepareStatement(sql);
+            int i=1;
+            for(Object obj : args){
+                ps.setObject(i, obj);
+                i++;
+            }
+            rs=ps.executeQuery();
+            //close(); //Dont close connection
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        return rs;
+        
+    }
+}

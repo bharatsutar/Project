@@ -1,0 +1,21 @@
+
+package com.project;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import com.controller.Client;
+
+public class ConnectionDB {
+	
+	
+	
+	public static void main(String args[])
+	{
+		Client c=new Client();
+
+	}
+	
+
+}

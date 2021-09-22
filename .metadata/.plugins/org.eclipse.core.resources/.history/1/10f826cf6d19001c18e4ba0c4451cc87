@@ -1,0 +1,64 @@
+
+package com.project;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+import com.controller.Client;
+
+public class ConnectionDB {
+	
+	
+	static Scanner sc=new Scanner(System.in);
+	public static void main(String args[])
+	{
+		int ch=0;
+		
+		do {
+			System.out.println("****************WelCome To Training Academy**********************");
+			System.out.println("1.Enrolle Student");
+			System.out.println("2.Enrolle Trainer");
+			System.out.println("3.Exit");
+			System.out.println("");
+			System.out.println("Choose Option (1/2)");
+			ch=sc.nextInt();
+			switch(ch) {
+				case 1:
+					enrollStud();
+					break;
+				case 2:
+					enrollTrainer();
+					break;
+				case 3:
+					break;
+				default:
+					System.out.print("Plesce Enter Valid Number");
+					
+					
+					
+			}
+			
+			
+		}while(ch!=3);
+		System.out.println("Thanks for Using our Softeware");
+//		System.out.println("1.Add New Student");
+//		System.out.println("2.Modify Student Details");
+//		System.out.println();
+//		//Client c=new Client();
+
+	}
+	static void enrollStud() {
+		Client c=new Client();
+		c.getBatchs();
+		System.out.print("Choose Batch :");
+		
+		
+		
+	}
+	static void enrollTrainer() {
+		
+	}
+
+}

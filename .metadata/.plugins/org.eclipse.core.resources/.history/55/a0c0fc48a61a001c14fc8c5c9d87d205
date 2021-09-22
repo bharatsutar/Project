@@ -1,0 +1,14 @@
+package com.model;
+
+public class Batch {
+	private int batch_no;
+	private String batch_name;
+	private String batch_time;
+	
+
+	
+	
+	
+	
+
+}

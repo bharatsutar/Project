@@ -1,0 +1,793 @@
+package com.controller;
+
+import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Scanner;
+
+import javax.sql.RowSet;
+
+import com.dao.DBClass;
+import com.model.Batch;
+import com.model.ExamResult;
+import com.model.Student;
+import com.model.Trainer;
+
+
+public class Client {
+	DBClass db=new DBClass();
+	Scanner sc=new Scanner(System.in);
+
+	public void allStudent() {
+		int ch=0;
+		do {
+			System.out.println("1:Add New Student");
+			System.out.println("2:Modify Existing Student");
+			System.out.println("3:Delete Existing Student");
+			System.out.println("4:Add Marks of Student");
+			System.out.println("5:Update Student Marks");
+			System.out.println("6:Delete Result of Student");
+			System.out.println("7:Exit from this Options");
+			System.out.println("Choose Options :");
+			ch=sc.nextInt();
+			int id;
+			switch(ch) {
+				case 1:
+					int bt=getBatchs();
+					enterStud(bt);
+					break;
+				case 2:
+					System.out.println("Enter Id to Update Data :");
+					id=sc.nextInt();
+					updateStudent(id);
+					break;
+				case 3:
+					System.out.println("Enter Id to Delete Data :");
+					 id=sc.nextInt();
+					deleteStudent(id);
+					break;
+					
+				case 4:
+					System.out.println("Enter Id to add Marks Data :");
+					 id=sc.nextInt();
+					addMarksOfStudent(id);
+					break;
+				case 5:
+					System.out.println("Enter Id to Update Marks Data :");
+					 id=sc.nextInt();
+					updateMarks(id);
+					break;
+				case 6:
+					System.out.println("Enter Id to Delete Marks Data of Student:");
+					 id=sc.nextInt();
+					deleteMarksOfStudent(id);
+					break;
+				case 7:
+					break;
+				default:
+					System.out.println("Wrong Choice.....?");
+			}
+			
+			
+		}while(ch!=7);
+	}
+	public int getBatchs() {
+		//Scanner scanner=new Scanner(System.in);
+		//System.out.println("Before");
+		RowSet rs=db.getAll("Select * from Batch");
+		System.out.println("Avalable Batches");
+		System.out.println("Batch No.  |   Batch Time");
+		System.out.println("----------------------------");
+		try {
+			while (rs.next()) {
+				
+				System.out.println("  "+ rs.getString(1)+"        |     "+ rs.getString(2));
+				//System.out.println("Batch Time:- "+ rs.getString(2));
+				System.out.println("-------------------------------------");
+				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.print("Choose Batch :");
+		int ch=sc.nextInt();
+		//enterStud(ch);
+		return ch;
+	}
+	public void enterStud(int batchno) {
+		//Scanner sc=new Scanner(System.in);
+		Student obj=new Student();
+			System.out.println("Enter ID :");
+//			int id=sc.nextInt();
+//			obj.setsId(id);
+			obj.setsId(sc.nextInt());
+		
+		System.out.println("Enter Student Name :");
+		//String name=sc.next();
+		obj.setsName(sc.next());
+		System.out.println("Enter Mobile No. :");
+//		double phone=sc.nextDouble();
+		obj.setsMobileNo(sc.nextDouble());
+		System.out.println("Enter Address :");
+//		String address=sc.next();
+		obj.setsAddress(sc.next());
+		obj.setsBatch(batchno);
+		try {
+		db.updateDB("Insert into Student (S_Id,S_Name, S_MobileNo,S_Address,Batch_No) values(?,?,?,?,?)", obj.getsId(),obj.getsName(),obj.getsMobileNo(),obj.getsAddress(),obj.getsBatch());
+		}catch(Exception e) {
+			
+		}
+	}
+	public void updateStudent(int id) {
+		RowSet rs=db.getAll("Select * from Student where S_Id=?",id);
+		
+		Student obj=new Student();
+		
+		try {
+			if (rs.next()) {
+				obj.setsId(id);
+				//obj.setsId(rs.getInt(1));
+				obj.setsName(rs.getString(2));
+				obj.setsMobileNo(rs.getDouble(3));
+				obj.setsAddress(rs.getString(4));
+				obj.setsBatch(rs.getInt(5));
+				System.out.println("Enter Name If want to change");
+				String str=sc.next();
+				if(!str.trim().equalsIgnoreCase("na")) {
+					
+					obj.setsName(str);
+				}
+				System.out.println("Enter Mobile If want to change");
+				str=sc.next();
+				if(!str.trim().equalsIgnoreCase("na")) {
+					double mb=Double.parseDouble(str);
+					obj.setsMobileNo(mb);
+					
+				}
+				System.out.println("Enter Addres If want to change");
+				str=sc.next();
+				if(!str.trim().equalsIgnoreCase("na")) {
+					obj.setsAddress(str);
+				}
+				System.out.println("Enter Batch If want to change");
+				str=sc.next();
+				if(!str.trim().equalsIgnoreCase("na")) {
+					int batch=Integer.parseInt(str);
+					obj.setsBatch(batch);
+				}
+				
+			}
+			else {
+				System.out.println("ID is not in Table");
+			}
+		}catch(Exception e) {
+				System.out.println(e);
+		}
+		
+		
+	//	System.out.println("vtyh");
+		try {
+		//	System.out.println("hiii");
+			db.updateDB("update Student set  S_Name=?, S_MobileNo=?, S_Address=?, Batch_No=? where S_Id=?", obj.getsName(),obj.getsMobileNo(),obj.getsAddress(),obj.getsBatch(),obj.getsId());
+			System.out.println("Student is Updated.....!");
+		}catch(Exception e) {
+			System.out.println(e);
+		}
+		
+	}
+	public void deleteStudent(int id) {
+		RowSet rs=db.getAll("Select * from Student where S_Id=?",id);
+		
+		//Student obj=new Student();
+		
+		try {
+			if (rs.next()) {
+				db.updateDB("delete from Student where S_Id=?", id);
+				System.out.println("Student is Deleted");
+				
+			}
+		}catch(Exception e) {
+			System.out.println(e);
+		}
+			
+	}
+	
+	
+	public void addMarksOfStudent(int id) {
+		ExamResult obj=new ExamResult();
+		System.out.println("Enter Exam ID :");
+		obj.setE_Id(sc.nextInt());
+		//System.out.println("Enter Student ID :");
+		obj.setS_Id(id);
+	
+		System.out.println("Enter Student Batch No. :");
+		
+		obj.setBatch_No(sc.nextInt());
+		System.out.println("Enter Exam Date :");
+	
+		obj.setE_Date(sc.next());
+		System.out.println("Enter Java Marks out of 100 :");
+		//
+		int java=sc.nextInt();
+		obj.setE_SubJava(java);
+		System.out.println("Enter MySQL Marks out of 100 :");
+		//
+		int mysql=sc.nextInt();
+		obj.setE_SubMysql(mysql);
+		System.out.println("Enter C# Marks out of 100 :");
+		//
+		int csharp=sc.nextInt();
+		obj.setE_SubCSharp(csharp);
+		//System.out.println("Enter Out Of Marks :");
+		obj.setE_OutMarks(300);
+		int tot=java+mysql+csharp;
+		double per=(tot/300.0)*100;
+		obj.setE_Score(tot);
+		obj.setE_Percentage(per);
+		//System.out.println("Enter Percentage :");
+		//obj.setE_Score(obj.getE_SubJava()+obj.getE_SubMysql()+obj.getE_SubCSharp());
+		//int per=(obj.getE_Score()/obj.getE_OutMarks())*100;
+//		System.out.println(java);
+//		System.out.println(mysql);
+//		System.out.println(csharp);
+//		System.out.println(tot/300.0);
+//		System.out.println(per);
+		obj.setE_Percentage(per);
+		//System.out.println("jhvyjvghcfc");
+		if(obj.getE_Percentage()>=50) {
+			obj.setE_Status("Pass");
+			//System.out.println("pass");
+		}
+		else {
+			obj.setE_Status("Fail");
+			//System.out.println("Fail");
+		}
+		try {
+			db.updateDB("Insert into exam_result (E_Id, S_Id, Batch_No, E_Date, E_Score, E_OutMarks, E_Percentage, E_Status, E_SubJava, E_SubMysql, E_SubCSharp) values(?,?,?,?,?,?,?,?,?,?,?)", obj.getE_Id(),obj.getS_Id(),obj.getBatch_No(),obj.getE_Date(),obj.getE_Score(),obj.getE_OutMarks(),obj.getE_Percentage(),obj.getE_Status(),obj.getE_SubJava(),obj.getE_SubMysql(),obj.getE_SubCSharp());
+			System.out.println("Marks Updated...");
+		}catch(Exception e) {
+			System.out.println(e);
+		}
+	
+		}
+
+
+		public void updateMarks(int id) {
+			RowSet rs=db.getAll("Select E_SubJava, E_SubMysql, E_SubCSharp from Exam_Result where S_Id=?",id);
+			ExamResult obj1=new ExamResult();
+			Student obj=new Student();
+			
+			try {
+				if (rs.next()) {
+					obj1.setS_Id(id);
+					//obj.setsId(rs.getInt(1));
+					obj1.setE_SubJava(rs.getInt(1));
+					obj1.setE_SubMysql(rs.getInt(2));
+					obj1.setE_SubCSharp(rs.getInt(3));
+					
+					System.out.println("Enter Java Marks If want to change");
+					String str=sc.next();
+					if(!str.trim().equalsIgnoreCase("na")) {
+						
+						obj1.setE_SubJava(Integer.parseInt(str));
+					}
+					System.out.println("Enter MySQL Marks If want to change");
+					str=sc.next();
+					if(!str.trim().equalsIgnoreCase("na")) {
+						int mysql=Integer.parseInt(str);
+						obj1.setE_SubMysql(mysql);
+						
+					}
+					System.out.println("Enter C# Marks If want to change");
+					str=sc.next();
+					if(!str.trim().equalsIgnoreCase("na")) {
+						obj1.setE_SubCSharp(Integer.parseInt(str));
+					}
+					int tot=obj1.getE_SubJava()+obj1.getE_SubMysql()+obj1.getE_SubCSharp();
+					double per=(tot/300.0)*100;
+					obj1.setE_Percentage(per);
+					if(obj1.getE_Percentage()>=50) {
+						obj1.setE_Status("Pass");
+						//System.out.println("pass");
+					}
+					else {
+						obj1.setE_Status("Fail");
+						//System.out.println("Fail");
+					}
+					try {
+						db.updateDB("Update exam_result set E_Score=?, E_Percentage=?, E_Status=?, E_SubJava=?, E_SubMysql=?, E_SubCSharp=? where S_Id=?", obj1.getE_Score(),obj1.getE_Percentage(),obj1.getE_Status(),obj1.getE_SubJava(),obj1.getE_SubMysql(),obj1.getE_SubCSharp(),obj1.getS_Id());
+					
+						
+						System.out.println("Marks Updated...");
+					}catch(Exception e) {
+						System.out.println(e);
+					}
+				
+					
+					
+				}
+				else {
+					System.out.println("ID is not in Table");
+				}
+			}catch(Exception e) {
+					
+			}
+			
+			
+		//	System.out.println("vtyh");
+			try {
+			//	System.out.println("hiii");
+				db.updateDB("update Student set  S_Name=?, S_MobileNo=?, S_Address=?, Batch_No=? where S_Id=?", obj.getsName(),obj.getsMobileNo(),obj.getsAddress(),obj.getsBatch(),obj.getsId());
+				System.out.println("Student is Updated.....!");
+			}catch(Exception e) {
+				System.out.println();
+			}
+		
+		}
+		public void deleteMarksOfStudent(int id) {
+			RowSet rs=db.getAll("Select * from Exam_Result where S_Id=?",id);
+			
+			
+			
+			try {
+				if (rs.next()) {
+					db.updateDB("delete from Exam_Result where S_Id=?", id);
+					System.out.println("Student is Deleted");
+					
+				}
+				else {
+					System.out.println("ID is Invalid");
+				}
+			}catch(Exception e) {
+				
+			}
+				
+		}
+		public void allTrainers() {
+			int ch=0;
+			do {
+				System.out.println("1:Add New Trainer");
+				System.out.println("2:Modify Existing Trainer");
+				System.out.println("3:Delete Existing Trainer");
+				System.out.println("4:Exit from this Options");
+				System.out.println("Choose Options :");
+				ch=sc.nextInt();
+				int id;
+				switch(ch) {
+					case 1:
+						enterTrainer();
+						break;
+					case 2:
+						System.out.println("Enter Id to Update Data :");
+						id=sc.nextInt();
+						updateTrainer(id);
+						break;
+					case 3:
+						System.out.println("Enter Id to Delete Data :");
+						 id=sc.nextInt();
+						deleteTrainer(id);
+						break;
+						
+					case 4:
+						System.out.println("Enter Id to add Marks Data :");
+						 id=sc.nextInt();
+						addMarksOfStudent(id);
+						break;
+					case 5:
+						System.out.println("Enter Id to Update Marks Data :");
+						 id=sc.nextInt();
+						updateMarks(id);
+						break;
+					case 6:
+						System.out.println("Enter Id to Delete Marks Data of Student:");
+						 id=sc.nextInt();
+						deleteMarksOfStudent(id);
+						break;
+					case 7:
+						break;
+					default:
+						System.out.println("Wrong Choice.....?");
+				}
+				
+				
+			}while(ch!=7);
+		}
+		public void enterTrainer() {
+			//Scanner sc=new Scanner(System.in);
+				System.out.println("Enter ID :");
+				int id=sc.nextInt();
+			
+			
+			System.out.println("Enter Trainer Name :");
+			String name=sc.next();
+			System.out.println("Enter Mobile No. :");
+			double phone=sc.nextDouble();
+			System.out.println("Enter Address :");
+			String address=sc.next();
+			int batchno;
+			while(true) {
+				
+				System.out.println("Enter Batch No. :");
+				batchno=sc.nextInt();
+				RowSet rs=db.getAll("Select * from Trainer");
+				boolean f=true;
+				try {
+					while (rs.next()) {
+						int k=rs.getInt(5);
+						if(k==batchno)
+						{
+								System.out.println("Allredy Trainner is Avalable for this Batch Plz re Enter : ");
+								f=false;
+						}
+						//System.out.println("Batch Time:- "+ rs.getString(2));
+						//System.out.println("-------------------------------------");
+						
+					}
+					if(f)
+						break;
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+			try {
+				db.updateDB("Insert into Trainer (T_Id,T_Name, T_MobileNo,T_Address,Batch_No) values(?,?,?,?,?)", id,name,phone,address,batchno);
+				System.out.println("Trainer In Updated....!");
+			}catch(Exception e) {
+				System.out.println("Sorry Your Time is not convineant with us Batch Is not Provided By institute\n Thanks for visiting Us......!");
+				System.out.println();
+			}
+		}
+		public void updateTrainer(int id) {
+				RowSet rs=db.getAll("Select * from Trainer where T_Id=?",id);
+				
+				//Student obj=new Student();
+				Trainer obj1=new Trainer();
+				
+				try {
+					if (rs.next()) {
+						//obj.setsId(id);
+						obj1.settName(rs.getString(2));
+						obj1.settMobileNo(rs.getDouble(3));
+						obj1.settAddress(rs.getString(4));
+						obj1.settBatch(rs.getInt(5));
+						System.out.println("Enter Name If want to change");
+						String str=sc.next();
+						if(!str.trim().equalsIgnoreCase("na")) {
+							
+							obj1.settName(str);
+							System.out.println(obj1.gettName());
+						}
+						System.out.println("Enter Mobile If want to change");
+						str=sc.next();
+						if(!str.trim().equalsIgnoreCase("na")) {
+							double mb=Double.parseDouble(str);
+							obj1.settMobileNo(mb);
+							System.out.println(obj1.gettMobileNo());	
+						}
+						System.out.println("Enter Addres If want to change");
+						str=sc.next();
+						if(!str.trim().equalsIgnoreCase("na")) {
+							obj1.settAddress(str);
+							System.out.println(obj1.gettAddress());
+						}
+						while(true) {
+							int batch=0;
+						System.out.println("Enter Batch If want to change");
+						str=sc.next();
+						if(!str.trim().equalsIgnoreCase("na")) {
+							 batch=Integer.parseInt(str);
+	
+								RowSet rs1=db.getAll("Select * from Trainer");
+								boolean f=true;
+								try {
+									while (rs1.next()) {
+										int k=rs1.getInt(5);
+										if(k==batch)
+										{
+												System.out.println("Allredy Trainner is Avalable for this Batch Plz re Enter : ");
+												f=false;
+										}
+										//System.out.println("Batch Time:- "+ rs.getString(2));
+										//System.out.println("-------------------------------------");
+										
+									}
+									if(f)
+										break;
+								} catch (SQLException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								
+							}else {
+								break;
+							}
+							
+							
+							
+							
+						
+							obj1.settBatch(batch);
+							System.out.println(obj1.gettBatch());
+						}
+						
+						}
+					else {
+						System.out.println("ID is not in Table");
+					}
+				}catch(Exception e) {
+						e.printStackTrace();
+				}
+				
+				
+			//	System.out.println("vtyh");
+				try {
+					System.out.println("hiii");
+					db.updateDB("update trainer set  T_name=?, T_MobileNo=?, T_Address=?, Batch_No=? where T_Id=?", obj1.gettName(),obj1.gettMobileNo(),obj1.gettAddress(),obj1.gettBatch(),obj1.gettId());
+					
+					System.out.println("Student is Updated.....!");
+				}catch(Exception e) {
+					e.printStackTrace();
+					
+				}
+				
+			}
+		
+	
+		public void deleteTrainer(int id) {
+		
+				RowSet rs=db.getAll("Select * from Trainer where T_Id=?",id);
+				
+				//Student obj=new Student();
+				
+				try {
+					if (rs.next()) {
+						db.updateDB("delete from Trainer where T_Id=?", id);
+						System.out.println("Trainer is Deleted");
+						
+					}
+				}catch(Exception e) {
+					System.out.println(e);
+				}
+					
+		
+			
+		}
+
+
+		public void allBatches() {
+			int ch=0;
+			do {
+				System.out.println("1:Add New Batch");
+				System.out.println("2:Modify Existing Batch");
+				System.out.println("3:Delete Existing Batch");
+				System.out.println("4:Display All Batches");
+				System.out.println("5:Exit from this Options");
+				System.out.println("Choose Options :");
+				ch=sc.nextInt();
+				int id;
+				switch(ch) {
+					case 1:
+						enterBatch();
+						break;
+					case 2:
+						System.out.println("Enter Id to Update Data :");
+						id=sc.nextInt();
+						updateBatch(id);
+						break;
+					case 3:
+						System.out.println("Enter Id to Delete Data :");
+						 id=sc.nextInt();
+						deleteBatch(id);
+						break;
+						
+					case 4:
+						
+						showAllBatches();
+						break;
+					case 5:
+						break;
+					default:
+						System.out.println("Wrong Choice.....?");
+				}
+				
+				
+			}while(ch!=5);
+		}
+		public void enterBatch() {
+			
+			Batch obj=new Batch();
+					//System.out.println("Enter Batch No. :");
+//					double phone=sc.nextDouble();
+					//obj.setBatch_no(sc.nextInt());
+					int batchno=0;
+					
+					while(true) {
+						
+						System.out.println("Enter Batch No. :");
+						batchno=sc.nextInt();
+						RowSet rs=db.getAll("Select * from Batch");
+						boolean f=true;
+						try {
+							while (rs.next()) {
+								int k=rs.getInt(1);
+								if(k==batchno)
+								{
+										System.out.println("Allredy Batch is Avalable  Plz re Enter  ");
+										f=false;
+								}
+								//System.out.println("Batch Time:- "+ rs.getString(2));
+								//System.out.println("-------------------------------------");
+								
+							}
+							if(f)
+								break;
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+					}
+					obj.setBatch_no(batchno);
+					System.out.println("Enter Batch Name :");
+					obj.setBatch_name(sc.next());
+					System.out.println("Enter Batch Time :");
+					obj.setBatch_time(sc.next());
+					
+					
+					try {
+						db.updateDB("Insert into Batch (Batch_NO,Batch_Name,Batch_Time) values(?,?,?)", obj.getBatch_no(),obj.getBatch_name(),obj.getBatch_time());
+						System.out.println("Batch  Updated....!");
+					}catch(Exception e) {
+						//System.out.println("Sorry Your Time is not convineant with us Batch Is not Provided By institute\n Thanks for visiting Us......!");
+						System.out.println(e);
+					}
+				
+				
+				
+
+			
+		}
+		public void updateBatch( int id){
+			RowSet rs=db.getAll("Select * from Batch where Batch_NO=?",id);
+			
+			Batch obj=new Batch();
+			
+			try {
+				if (rs.next()) {
+					obj.setBatch_no(id);
+					//obj.setsId(rs.getInt(1));
+					obj.setBatch_name(rs.getString(2));
+					obj.setBatch_time(rs.getString(3));
+					System.out.println("Enter Name If want to change");
+					String str=sc.next();
+					if(!str.trim().equalsIgnoreCase("na")) {
+						
+						obj.setBatch_name(str);
+					}
+					System.out.println("Enter Batch Time If want to change");
+					str=sc.next();
+					if(!str.trim().equalsIgnoreCase("na")) {
+						
+						obj.setBatch_time(str);
+						
+					}
+					
+				}
+				else {
+					System.out.println("ID is not in Table");
+				}
+			}catch(Exception e) {
+					
+			}
+			
+			
+		//	System.out.println("vtyh");
+			try {
+			//	System.out.println("hiii");
+				db.updateDB("update Batch set  Batch_Name=?, Batch_Time=? where Batch_NO=?", obj.getBatch_name(),obj.getBatch_time(),obj.getBatch_no());
+				System.out.println("Batch is Updated.....!");
+			}catch(Exception e) {
+				System.out.println(e);
+			}
+		
+		}
+		public void deleteBatch(int id) {
+			
+			
+				RowSet rs=db.getAll("Select * from Batch where Batch_NO=?",id);
+				
+				//Student obj=new Student();
+				
+				try {
+					if (rs.next()) {
+						db.updateDB("delete from batch where Batch_NO=?", id);
+						System.out.println("Student is Deleted");
+						
+					}
+					else {
+						System.out.println("Id is not present in Batch");
+					}
+				}catch(Exception e) {
+					System.out.println(e);
+				}
+					
+			
+		}
+		public void showAllBatches() {
+		
+				RowSet rs=db.getAll("Select * from Batch");
+				System.out.println("Avalable Batches");
+				System.out.println("Batch No.  |   Batch Name  |   Batch Time");
+				System.out.println("-----------------------------------------------");
+				try {
+					while (rs.next()) {
+						
+						System.out.println("  "+ rs.getString(1)+"        |     "+ rs.getString(2)+"     |       "+rs.getString(3));
+						
+						System.out.println("-----------------------------------------------");
+						
+					}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		
+		
+		
+		public void getResults() {
+			int ch=0;
+			do {
+				System.out.println("1:Top 5 Student From Perticular Batch");
+				System.out.println("2:Top 10 Student From All Batches");
+				System.out.println("3:Batch name and trainer name of whose average percentage result is best");
+				System.out.println("4:Name of the batch where maximum students have failed.");
+				System.out.println("5:Exit from this Options");
+				System.out.println("Choose Options :");
+				ch=sc.nextInt();
+				int id;
+				switch(ch) {
+					case 1:
+						System.out.println("Enter Id to Update Data :");
+						id=sc.nextInt();
+						top5StudentOfBatch(id);
+						
+						break;
+					case 2:
+						top10Students();
+						break;
+					case 3:
+						
+						topAvaragePercentage();
+						break;
+						
+					case 4:
+						bacthMaxStudentFailed();
+						break;
+					case 5:
+						break;
+					
+					default:
+						System.out.println("Wrong Choice.....?");
+				}
+				
+				
+			}while(ch!=5);
+		
+		}
+		public void top5StudentOfBatch(int id) {
+			
+		}
+		public void top10Students() {
+			
+		}
+		public void topAvaragePercentage() {
+			
+		}
+		public void bacthMaxStudentFailed() {
+			
+		}
+}

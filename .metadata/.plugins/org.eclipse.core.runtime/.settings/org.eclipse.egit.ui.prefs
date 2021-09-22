@@ -1,0 +1,2 @@
+commit_dialog_history_messages=<?xml version\="1.0" encoding\="UTF-8"?>\r\n<messages>\r\n<message>first commit</message>\r\n<message>select T_Name,Batch_Name from trainer,batch where&\#x0A;trainer.Batch_No\=batch.Batch_NO and batch.Batch_No in (select&\#x0A;tmp1.Batch_No from (select max(tmp.ap),Batch_No from (select&\#x0A;Batch_No,avg(E_Percentage) as ap from exam_result group by Batch_no)&\#x0A;tmp) tmp1);</message>\r\n</messages>
+eclipse.preferences.version=1
